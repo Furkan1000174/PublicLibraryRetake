@@ -143,6 +143,7 @@ class Catalog:
         while(True):
             print("\nPlease type the name of the book, the isbn, the published year or the author (type 'exit' to stop)")
             bookToSearch = input()
+            SearchSplit = bookToSearch.split()
             found = False
             if bookToSearch == "exit":
                 print("You will be send back to the main menu")
@@ -150,19 +151,24 @@ class Catalog:
                 break
             else:
                 try:
-                    for books in bookList:
-                        book = f"{books.isbn} {books.title} {books.author} {str(books.year)}"
-                        if bookToSearch in book:
-                            print(f"\nTitle: {books.title}\nWritten by: {books.author}\nPublished in: {books.year}\nISBN: {books.isbn}\nAvailable: {books.copies}\n")
-                            found = True
-                            print("What would you like to do?\n1. Loan book\n2. Search another book\n3. Back")
-                            choice = input()
-                            if choice == "1":
-                                bookLoanScreen(user, books)
-                            elif choice == "2":
-                                pass
-                            elif choice == "3":
-                                mainScreen(user)
+                    for books in bookList:                       
+                        book = f"{books.title} {books.author} {books.year} {books.isbn}"
+                        for words in SearchSplit:
+                            if words in book:
+                                split = True
+                                if bookToSearch in book or split == True:
+                                    print(f"\nTitle: {books.title}\nWritten by: {books.author}\nPublished in: {books.year}\nISBN: {books.isbn}\nAvailable: {books.copies}\n")
+                                    found = True
+                                    split = False
+                                    break
+                    print("What would you like to do?\n1. Loan book\n2. Search another book\n3. Back")
+                    choice = input()
+                    if choice == "1":
+                        bookLoanScreen(user, books)
+                    elif choice == "2":
+                        pass
+                    elif choice == "3":
+                        break
                     if found == False:
                         print("\nBook not found\n")
                         time.sleep(2)
