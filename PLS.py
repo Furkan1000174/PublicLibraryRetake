@@ -103,7 +103,13 @@ class librarian:
         print("Please enter the isbn number")
         bisbn = input()
         print("Please enter the amount of book copies")
-        bcopies = input()
+        while(True):
+            bcopies = input()
+            try:
+                int(bcopies)
+                break
+            except:
+                print("Please enter a number")
         print("Adding book...")
         time.sleep(2)
         bookList.append(BookItem(btitle,bauthor,byear,bisbn,int(bcopies)))
@@ -143,8 +149,9 @@ class Catalog:
         while(True):
             print("\nPlease type the name of the book, the isbn, the published year or the author (type 'exit' to stop)")
             bookToSearch = input()
-            SearchSplit = bookToSearch.split()
             found = False
+            bookL = ""
+            booksFound = 0
             if bookToSearch == "exit":
                 print("You will be send back to the main menu")
                 time.sleep(2)
@@ -153,26 +160,28 @@ class Catalog:
                 try:
                     for books in bookList:                       
                         book = f"{books.title} {books.author} {books.year} {books.isbn}"
-                        for words in SearchSplit:
-                            if words in book:
-                                split = True
-                                if bookToSearch in book or split == True:
-                                    print(f"\nTitle: {books.title}\nWritten by: {books.author}\nPublished in: {books.year}\nISBN: {books.isbn}\nAvailable: {books.copies}\n")
-                                    found = True
-                                    split = False
-                                    break
-                    print("What would you like to do?\n1. Loan book\n2. Search another book\n3. Back")
-                    choice = input()
-                    if choice == "1":
-                        bookLoanScreen(user, books)
-                    elif choice == "2":
-                        pass
-                    elif choice == "3":
-                        break
-                    if found == False:
-                        print("\nBook not found\n")
-                        time.sleep(2)
-                        mainScreen(user)
+                        if bookToSearch in book:
+                            print(f"\nTitle: {books.title}\nWritten by: {books.author}\nPublished in: {books.year}\nISBN: {books.isbn}\nAvailable: {books.copies}\n")
+                            bookL += f"\nTitle: {books.title}\nWritten by: {books.author}\nPublished in: {books.year}\nISBN: {books.isbn}\nAvailable: {books.copies}\n"
+                            found = True
+                            bookFound = books
+                            booksFound += 1
+                    if booksFound > 1:
+                        print("Multiple books found please search more specific")
+                        time.sleep(1)
+                    else:
+                        print("What would you like to do?\n1. Loan book\n2. Search another book\n3. Back")
+                        choice = input()
+                        if choice == "1":
+                            bookLoanScreen(user, bookFound)
+                        elif choice == "2":
+                            pass
+                        elif choice == "3":
+                            break
+                        if found == False:
+                            print("\nBook not found\n")
+                            time.sleep(2)
+                            mainScreen(user)
                 except:
                     print("\nNo books found\n")
                     time.sleep(2)
@@ -401,5 +410,8 @@ def librarianScreen(librarian):
         elif choice != "1" or choice != "2" or choice != "3" or choice != "4" or choice != "5" or choice != "6" or choice != "7":
             print("Please make a valid input")
             time.sleep(2)
+l = librarian("f","f","f","f")
+l.buildBookSet("booksset1.json")
+f = person.append(Person("f","f","f","f","f"))
 
 login()
