@@ -11,6 +11,7 @@ person = []
 bookList = []
 bookLoans = []
 Employees = []
+subscribers = []
 
 class PublicLibrary:
     def __init__(self, libraryName):
@@ -39,12 +40,17 @@ class librarian:
             AllData.append(json.dumps(books,indent=3, cls=classEncoder))
         for loans in bookLoans:
             AllData.append(json.dumps(loans,indent=3, cls=classEncoder))
+        for employee in Employees:
+            AllData.append(json.dumps(employee,indent=3, cls=classEncoder))
+        for subs in subscribers:
+            AllData.append(json.dumps(subs, indent=3, cls=classEncoder))
         with open ("PLSbackup.json", "w") as file:
             json.dump(AllData, file)
             print("System is backing up all data...")
             time.sleep(2)
             print("Backup succes")
-            time.sleep(2)
+            print("Data is stored as 'PLSbackup.json' please use this when restoring data")
+            time.sleep(4)
             file.close()
 
     def restoreBackup(self):
@@ -66,6 +72,10 @@ class librarian:
                         loanedBook = BookItem(bookname.get("title"),bookname.get("author"),bookname.get("year"),bookname.get("isbn"),bookname.get("copies"))
                         loaningPerson = Person(loaner.get("fname"),loaner.get("lname"),loaner.get("address"),loaner.get("username"),loaner.get("email"))
                         bookLoans.append(LoanItem(loanedBook,loaningPerson))
+                    elif "name" in linetoDict:
+                        Employees.append(librarian(linetoDict.get("name"),linetoDict.get("lname"),linetoDict.get("employeeNumber"),linetoDict.get("role")))
+                    elif "subname" in linetoDict:
+                        subscribers.append(Subscriber(linetoDict.get("subname"),linetoDict.get("lname"),linetoDict.get("address"),linetoDict.get("username"),linetoDict.get("email"),linetoDict.get("role")))
         print("All data has been restored...")
         time.sleep(2)
 
@@ -117,8 +127,8 @@ class librarian:
         time.sleep(2)
 
 class Subscriber(Person):
-    def __init__(self, fname, lname, address, username, email, role):
-        super().__init__(fname, lname, address, username, email)
+    def __init__(self, subname, lname, address, username, email, role):
+        super().__init__(subname, lname, address, username, email)
         self.role = role 
 
 class Catalog:
@@ -126,66 +136,75 @@ class Catalog:
         self.name = catalogName
     
     def catalogShow(self, user):
-        while(True):
-            os.system('cls||clear')
-            print(f"\nWelcome to the {LibrarysCatalog.name}!")
-            try:
-                for books in bookList:
-                    print(f"\nTitle: {books.title}\nWritten by: {books.author}\nPublished in: {books.year}\nISBN: {books.isbn}\nAvailable: {books.copies}\n")
-            except:
-                print("\nNo books found\n")
-                time.sleep(2)
-            print("What would u like to do?\n1. Search book\n2. Back")
-            choice = input()
-            if choice == "1":
-                LibrarysCatalog.bookSearcher(user)
-            elif choice == "2":
-                break
-            elif choice != "1" or choice != "2":
-                print("Please make a valid input")
-                time.sleep(2)
-
-    def bookSearcher(self, user):
-        while(True):
-            print("\nPlease type the name of the book, the isbn, the published year or the author (type 'exit' to stop)")
-            bookToSearch = input()
-            found = False
-            bookL = ""
-            booksFound = 0
-            if bookToSearch == "exit":
-                print("You will be send back to the main menu")
-                time.sleep(2)
-                break
-            else:
+        if len(bookList) == 0:
+            print("No books found")
+            time.sleep(2)
+        else:
+            while(True):
+                os.system('cls||clear')
+                print(f"\nWelcome to the {LibrarysCatalog.name}!")
                 try:
-                    for books in bookList:                       
-                        book = f"{books.title} {books.author} {books.year} {books.isbn}"
-                        if bookToSearch in book:
-                            print(f"\nTitle: {books.title}\nWritten by: {books.author}\nPublished in: {books.year}\nISBN: {books.isbn}\nAvailable: {books.copies}\n")
-                            bookL += f"\nTitle: {books.title}\nWritten by: {books.author}\nPublished in: {books.year}\nISBN: {books.isbn}\nAvailable: {books.copies}\n"
-                            found = True
-                            bookFound = books
-                            booksFound += 1
-                    if booksFound > 1:
-                        print("Multiple books found please search more specific")
-                        time.sleep(1)
-                    else:
-                        print("What would you like to do?\n1. Loan book\n2. Search another book\n3. Back")
-                        choice = input()
-                        if choice == "1":
-                            bookLoanScreen(user, bookFound)
-                        elif choice == "2":
-                            pass
-                        elif choice == "3":
-                            break
-                        if found == False:
-                            print("\nBook not found\n")
-                            time.sleep(2)
-                            mainScreen(user)
+                    for books in bookList:
+                        print(f"\nTitle: {books.title}\nWritten by: {books.author}\nPublished in: {books.year}\nISBN: {books.isbn}\nAvailable: {books.copies}\n")
                 except:
                     print("\nNo books found\n")
                     time.sleep(2)
-                    mainScreen(user)
+                print("What would u like to do?\n1. Search book\n2. Back")
+                choice = input()
+                if choice == "1":
+                    LibrarysCatalog.bookSearcher(user)
+                elif choice == "2":
+                    break
+                elif choice != "1" or choice != "2":
+                    print("Please make a valid input")
+                    time.sleep(2)
+
+    def bookSearcher(self, user):
+        if len(bookList) == 0:
+            print("No books found")
+            time.sleep(2)
+        else: 
+            while(True):
+                print("\nPlease type the name of the book, the isbn, the published year or the author (type 'exit' to stop)")
+                bookToSearch = input()
+                found = False
+                bookL = ""
+                booksFound = 0
+                if bookToSearch == "exit":
+                    print("You will be send back to the main menu")
+                    time.sleep(2)
+                    break
+                else:
+                    try:
+                        for books in bookList:                       
+                            book = f"{books.title} {books.author} {books.year} {books.isbn}"
+                            if bookToSearch in book:
+                                print(f"\nTitle: {books.title}\nWritten by: {books.author}\nPublished in: {books.year}\nISBN: {books.isbn}\nAvailable: {books.copies}\n")
+                                bookL += f"\nTitle: {books.title}\nWritten by: {books.author}\nPublished in: {books.year}\nISBN: {books.isbn}\nAvailable: {books.copies}\n"
+                                found = True
+                                bookFound = books
+                                booksFound += 1
+                        if booksFound > 1:
+                            print("Multiple books found please search more specific")
+                            time.sleep(2)
+                        else:
+                            print("What would you like to do?\n1. Loan book\n2. Search another book\n3. Back")
+                            choice = input()
+                            if choice == "1":
+                                bookLoanScreen(user, bookFound)
+                            elif choice == "2":
+                                break
+                            elif choice == "3":
+                                break
+                            if found == False:
+                                print("\nBook not found\n")
+                                time.sleep(2)
+                                mainScreen(user)
+                            break
+                    except:
+                        print("\nNo books found\n")
+                        time.sleep(2)
+                        mainScreen(user)
 
 class BookItem:
     def __init__(self, title, author, year, ISBN, copies):
@@ -200,8 +219,9 @@ class LoanAdministration:
         self.LoanedIemsListName = loanitemsList
     
     def addBookLoan(self, bookitem, person):
-        global bookLoans
+        global bookLoans, subscribers
         bookLoans.append(LoanItem(bookitem, person))
+        subscribers.append(Subscriber(person.fname,person.lname,person.address,person.username,person.email,"Subscriber"))
 
     def showLoanAdministration(self):
         while(True):
@@ -215,8 +235,8 @@ class LoanAdministration:
                     print("No loaned books found")
                     time.sleep(2)
                 else:
-                    print("Currently loaned books:")
-                    time.sleep(2)
+                    print("Currently loaned books:\n")
+                    time.sleep(1)
                     for books in bookLoans:
                         print(f"Title: {books.book.title}\nBy: {books.person.fname}\n")
                     print("Enter anything to continue...")
@@ -239,7 +259,7 @@ class classEncoder(JSONEncoder):
 LoanAdminiStration = LoanAdministration("Pythons library loan administration")
 PublicLibrarySystem = PublicLibrary("Pythons Library")
 LibrarysCatalog = Catalog("Pythons Catalog")
-
+mainscreenLooper = True
 #FRONTEND
 def login():
     while(True):
@@ -310,6 +330,7 @@ def loginScreen():
                         time.sleep(2)
                         found = True
                         mainScreen(persons)
+                        break
                 if found == False:
                     print("User not found please try again")
                     time.sleep(2)
@@ -356,7 +377,7 @@ def bookLoanScreen(user, bookItem):
                     LoanAdminiStration.addBookLoan(bookItem,user)
                     print(f"Thank you {user.fname} your loan has been placed")
                     time.sleep(2)
-                    mainScreen(user)
+                    break
             elif option == "2":
                 print("You will be send back to the main menu")
                 time.sleep(2)
@@ -410,8 +431,4 @@ def librarianScreen(librarian):
         elif choice != "1" or choice != "2" or choice != "3" or choice != "4" or choice != "5" or choice != "6" or choice != "7":
             print("Please make a valid input")
             time.sleep(2)
-l = librarian("f","f","f","f")
-l.buildBookSet("booksset1.json")
-f = person.append(Person("f","f","f","f","f"))
-
 login()
