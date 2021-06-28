@@ -319,7 +319,7 @@ PublicLibrarySystem = PublicLibrary("Pythons Library")
 Libraryscatalogue = catalogue("Pythons catalogue")
 defaultLibrarian = librarian("admin", "admin", "0000","Librarian")
 Employees.append(defaultLibrarian)
-mainscreenLooper = True
+
 #FRONTEND
 def login():
     while(True):
