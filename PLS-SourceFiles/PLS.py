@@ -98,6 +98,7 @@ class librarian:
         with open(customerset, 'r')as file:
             reader = csv.reader(file)
             customers = []
+            person = []
             for row in reader:
                 customers.append(row)
             for customer in customers:
@@ -106,6 +107,7 @@ class librarian:
 
     def buildBookSet(self, booksset):
         global bookList
+        bookList = []
         with open(booksset, 'r')as books:
             bookcatalogue = json.load(books)
         for book in bookcatalogue:
@@ -254,7 +256,7 @@ class LoanAdministration:
                     print("Currently loaned books:\n")
                     time.sleep(1)
                     for books in bookLoans:
-                        print(f"Title: {books.book.title}\nBy: {books.person.fname}\n")
+                        print(f"Title: {books.book.title}\nBy:\n{books.person.fname}\n{books.person.lname}\n{books.person.address}\n{books.person.username}\n{books.person.email}\n")
                     print("Enter anything to continue...")
                     input()
             elif choice == "2":
